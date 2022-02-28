@@ -6,7 +6,7 @@
         <form class="form">
           <input v-model="name" type="text" placeholder="ユーザーネーム" class="input" required/>
           <br/>
-          <input v-model="email" type="text" placeholder="メールアドレス" class="input" required/>
+          <input v-model="email" type="email" placeholder="メールアドレス" class="input" required/>
           <br/>
           <input v-model="password" type="password" placeholder="パスワード" class="input" required/>
           <br/>
@@ -36,9 +36,8 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then((data) => {
-          data.user.sendEmailVerification().then(() => {
+            alert('登録が完了しました。')
             this.$router.replace('/login')
-          })
         })
         .catch((error) => {
           switch (error.code) {
