@@ -1,0 +1,38 @@
+<template>
+  <div class="side">
+    <div class="side__wrapper">
+      <img src="../assets/image/logo.png" width="10%" height="10%">
+      <nav class="nav">
+        <ul class="nav__wrapper">
+          <li class="nav__item"><NuxtLink to="/">新規登録</NuxtLink></li>
+          <li class="nav__item"><NuxtLink to="/login">ログイン</NuxtLink></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.header {
+  position: relative;
+  background-color: #1d50a2;
+  color: #fff;
+}
+.header__wrapper {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav__wrapper {
+  display: flex;
+}
+.nav__item {
+  list-style: none;
+  margin-right: 20px;
+}
+a {
+  color: white;
+  
+}
+</style>
