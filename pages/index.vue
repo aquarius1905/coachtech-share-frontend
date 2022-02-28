@@ -82,6 +82,7 @@ export default {
   padding: 7px;
   border: 1px solid #ccc;
   margin-bottom: 20px;
+  font-size: 16px;
 }
 .btn {
   border: 1px solid #1d50a2;
