@@ -37,9 +37,9 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then((data) => {
-          alert(data.user);
-          this.insertUsers(data.user);
-          this.$router.replace('/login');
+          alert(data.user.updateEmail);
+          // this.insertUsers(data.user);
+          // this.$router.replace('/login');
         })
         .catch((error) => {
           switch (error.code) {
