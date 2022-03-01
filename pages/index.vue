@@ -35,7 +35,7 @@ export default {
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
-        .then(() => {
+        .then((data) => {
             alert('登録が完了しました。')
             this.$router.replace('/login')
         })
