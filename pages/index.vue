@@ -36,13 +36,10 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then((data) => {
-          console.log(data.user);
-          insertUsers(data.user).then(() => {
-            this.$router.replace('/login');
-          })
+          throw new Error(data.user)
         })
-        .catch((error) => {
-          switch (error.code) {
+        .catch((e) => {
+          switch (e.code) {
             case 'auth/invalid-email':
               alert('メールアドレスの形式が違います。')
               break
@@ -54,6 +51,7 @@ export default {
               break
             default:
               alert('エラーが起きました。しばらくしてから再度お試しください。')
+              console.log(e.message);
               break
           }
         })
