@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import '@/assets/css/common.css'
 import firebase from '~/plugins/firebase'
 export default {
   data() {
