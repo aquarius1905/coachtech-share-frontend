@@ -19,9 +19,6 @@
   </div>
 </template>
 
-<script>
-import '@/assets/css/common.css'
-</script>
 <style scoped>
 .side {
   width: 15%;

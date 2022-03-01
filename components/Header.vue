@@ -12,10 +12,6 @@
   </div>
 </template>
 
-<script>
-  import '@/assets/css/common.css'
-</script>
-
 <style scoped>
 .header {
   position: relative;
