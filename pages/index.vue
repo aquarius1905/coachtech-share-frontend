@@ -21,17 +21,19 @@ import firebase from '~/plugins/firebase'
 export default {
   data() {
     return {
-      name: '',
-      email: '',
-      password: ''
+      name: null,
+      email: null,
+      password: null
     }
   },
   methods: {
     register() {
+      console.log('register');
       if (!this.name || !this.email || !this.password) {
         alert('ユーザーネーム、メールアドレス、またはパスワードが入力されていません。')
         return
       }
+      console.log('firebase before');
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
