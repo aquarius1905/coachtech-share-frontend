@@ -19,6 +19,9 @@
   </div>
 </template>
 
+<script>
+import '@/assets/css/common.css'
+</script>
 <style scoped>
 .side {
   width: 15%;
@@ -54,9 +57,5 @@
   font-size: 16px;
   margin: 20px 0 0 auto;
   cursor: pointer;
-}
-a {
-  color: white;
-  text-decoration: none; 
 }
 </style>

@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import firebase from '~/plugins/firebase'
 export default {
   data() {
     return {

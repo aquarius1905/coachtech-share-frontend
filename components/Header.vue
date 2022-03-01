@@ -12,6 +12,10 @@
   </div>
 </template>
 
+<script>
+  import '@/assets/css/common.css'
+</script>
+
 <style scoped>
 .header {
   position: relative;
@@ -30,9 +34,5 @@
 .nav__item {
   list-style: none;
   margin-right: 20px;
-}
-a {
-  color: white;
-  text-decoration: none; 
 }
 </style>

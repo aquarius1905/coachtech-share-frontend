@@ -35,10 +35,10 @@ export default {
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
-        .then((data) => {
-            //usersテーブルに登録する処理
-            //ログイン画面に遷移
-            this.$router.push('/login')
+        .then(() => {
+          alert('登録に成功しました。')
+          //ログイン画面へ遷移
+          this.$router.push('/login')
         })
         .catch((error) => {
           switch (error.code) {
