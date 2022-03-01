@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import '@/assets/css/common.css'
 import firebase from '~/plugins/firebase'
 export default {
   data() {
@@ -83,16 +84,6 @@ export default {
   padding: 7px;
   border: 1px solid #ccc;
   margin-bottom: 20px;
-  font-size: 16px;
-}
-.btn {
-  border: 1px solid #1d50a2;
-  border-radius: 10px;
-  background-color: #1d50a2;
-  padding: 10px;
-  text-align: center;
-  color: white;
-  width: 130px;
   font-size: 16px;
 }
 </style>

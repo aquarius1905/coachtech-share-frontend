@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import '@/assets/css/common.css'
 export default {
   data() {
     return {
