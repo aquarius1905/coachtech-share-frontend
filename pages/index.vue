@@ -36,10 +36,9 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then((data) => {
-          alert("登録しました。");
-          insertUsers(data);
-          alert("usersテーブルしました。");
-          this.$router.replace('/login');
+          insertUsers(data).then(() => {
+            this.$router.replace('/login');
+          })
         })
         .catch((error) => {
           switch (error.code) {
