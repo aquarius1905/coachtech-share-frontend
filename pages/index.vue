@@ -86,16 +86,13 @@ export default {
   font-size: 16px;
 }
 .btn {
-  border: 1px solid #003149;
+  border: 1px solid #1d50a2;
   border-radius: 10px;
-  background-color: #003149;
+  background-color: #1d50a2;
   padding: 10px;
   text-align: center;
   color: white;
   width: 130px;
   font-size: 16px;
-}
-.btn:hover {
-  cursor: pointer;
 }
 </style>
