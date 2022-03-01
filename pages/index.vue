@@ -28,12 +28,12 @@ export default {
   },
   methods: {
     register() {
-      console.log('register');
+      alert('register')
       if (!this.name || !this.email || !this.password) {
         alert('ユーザーネーム、メールアドレス、またはパスワードが入力されていません。')
         return
       }
-      console.log('firebase before');
+      alert('firebase before')
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
