@@ -36,16 +36,9 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then(() => {
-          alert("登録成功")
-          this.$router.replace('/confirm')
+          this.insertUsers();
+          this.$router.replace('/login');
         })
-        // .then(() => {
-        //   alert('登録に成功しました。')
-        //   //DBに登録
-        //   // insertUsers();
-        //   //ログイン画面へ遷移
-        //   this.$router.push('/login')
-        // })
         .catch((error) => {
           switch (error.code) {
             case 'auth/invalid-email':
@@ -69,7 +62,8 @@ export default {
         email: this.email,
         password: this.password,
       };
-      await this.$axios.post("", sendData)
+      console.log(sendData);
+      await this.$axios.post("http://127.0.0.1:8000/api/register", sendData)
     }
   },
 }
