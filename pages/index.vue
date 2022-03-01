@@ -28,17 +28,14 @@ export default {
   },
   methods: {
     register() {
-      alert('register')
       if (!this.name || !this.email || !this.password) {
         alert('ユーザーネーム、メールアドレス、またはパスワードが入力されていません。')
         return
       }
-      alert('firebase before')
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then((data) => {
-            alert('登録が完了しました。')
             this.$router.replace('/login')
         })
         .catch((error) => {
