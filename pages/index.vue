@@ -36,8 +36,8 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then((data) => {
-          alert(data);
-          insertUsers().then(() => {
+          console.log(data.user);
+          insertUsers(data.user).then(() => {
             this.$router.replace('/login');
           })
         })
@@ -58,11 +58,11 @@ export default {
           }
         })
     },
-    async insertUsers(data) {
+    async insertUsers(user) {
       const sendData = {
         name: this.name,
-        email: data.user.email,
-        password: data.user.password,
+        email: user.email,
+        password: user.password,
       };
       console.log(sendData);
       await this.$axios.post("http://127.0.0.1:8000/api/register", sendData)
