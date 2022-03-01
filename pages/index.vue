@@ -36,7 +36,9 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then((data) => {
-            this.$router.replace('/login')
+            //usersテーブルに登録する処理
+            //ログイン画面に遷移
+            this.$router.push('/login')
         })
         .catch((error) => {
           switch (error.code) {
@@ -63,7 +65,7 @@ export default {
 .input_wrapper {
   width: 30%;
   margin: 40px auto 0;
-  background-color: #eaf6f6;
+  background-color: #f6f7f9;
   padding: 30px;
 }
 .title {
@@ -84,9 +86,9 @@ export default {
   font-size: 16px;
 }
 .btn {
-  border: 1px solid #1d50a2;
+  border: 1px solid #003149;
   border-radius: 10px;
-  background-color: #1d50a2;
+  background-color: #003149;
   padding: 10px;
   text-align: center;
   color: white;
