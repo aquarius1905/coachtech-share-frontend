@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { ExtendedAPIPlugin } from 'webpack'
 import firebase from '~/plugins/firebase'
 export default {
   data() {
@@ -35,8 +36,8 @@ export default {
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
-        .then(() => {
-          this.insertUsers();
+        .then((data) => {
+          this.insertUsers(data.user);
           this.$router.replace('/login');
         })
         .catch((error) => {
@@ -56,11 +57,11 @@ export default {
           }
         })
     },
-    async insertUsers() {
+    async insertUsers(data) {
       const sendData = {
-        name: this.name,
-        email: this.email,
-        password: this.password,
+        name: this.email,
+        email: data.user,
+        password: data.password,
       };
       console.log(sendData);
       await this.$axios.post("http://127.0.0.1:8000/api/register", sendData)
