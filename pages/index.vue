@@ -35,8 +35,9 @@ export default {
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
-        .then(() => {
-          insertUsers(data).then(() => {
+        .then((data) => {
+          alert(data);
+          insertUsers().then(() => {
             this.$router.replace('/login');
           })
         })
