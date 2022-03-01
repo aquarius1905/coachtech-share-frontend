@@ -41,10 +41,6 @@ export default {
   background-color: #eaf6f6;
   padding: 30px;
 }
-.title {
-  font-size: 30px;
-  text-align: center;
-}
 .form {
   text-align: center;
   margin-top: 20px;

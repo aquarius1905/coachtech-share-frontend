@@ -36,10 +36,16 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then(() => {
-          alert('登録に成功しました。')
-          //ログイン画面へ遷移
-          this.$router.push('/login')
+          alert("登録成功")
+          this.$router.replace('/confirm')
         })
+        // .then(() => {
+        //   alert('登録に成功しました。')
+        //   //DBに登録
+        //   // insertUsers();
+        //   //ログイン画面へ遷移
+        //   this.$router.push('/login')
+        // })
         .catch((error) => {
           switch (error.code) {
             case 'auth/invalid-email':
@@ -57,6 +63,14 @@ export default {
           }
         })
     },
+    async insertUsers() {
+      const sendData = {
+        name: this.name,
+        email: this.email,
+        password: this.password,
+      };
+      await this.$axios.post("", sendData)
+    }
   },
 }
 </script>
