@@ -21,9 +21,11 @@ import firebase from '~/plugins/firebase'
 export default {
   data() {
     return {
-      name: null,
-      email: null,
-      password: null
+      user: {
+        name: null,
+        email: null,
+        password: null
+      }
     }
   },
   methods: {
@@ -34,9 +36,10 @@ export default {
       }
       firebase
         .auth()
-        .createUserWithEmailAndPassword(this.email, this.password)
-        .then((data) => {
-          throw new Error(data.user)
+        .createUserWithEmailAndPassword(this.user.email, this.user.password)
+        .then((user) => {
+          alert("登録しました。")
+          this.insertUsers(user);
         })
         .catch((e) => {
           switch (e.code) {
@@ -57,16 +60,7 @@ export default {
         })
     },
     async insertUsers(user) {
-      const sendData = {
-        name: this.name,
-        email: user.email,
-        password: user.password,
-      };
-      console.log(sendData);
-      await this.$axios.post("http://127.0.0.1:8000/api/register", sendData)
-    },
-    async replaceLogin() {
-
+      await this.$axios.post("http://127.0.0.1:8000/api/register", user)
     }
   },
 }
