@@ -54,12 +54,4 @@ export default {
   text-align: center;
   margin-top: 20px;
 }
-.input {
-  border-radius: 5px;
-  width: 360px;
-  height: 30px;
-  padding: 7px;
-  border: 1px solid #ccc;
-  margin-bottom: 20px;
-}
 </style>

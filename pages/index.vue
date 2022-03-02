@@ -21,25 +21,25 @@ import firebase from '~/plugins/firebase'
 export default {
   data() {
     return {
-      user: {
-        name: null,
-        email: null,
-        password: null
-      }
+      name: null,
+      email: null,
+      password: null
     }
   },
   methods: {
     register() {
+      alert("登録開始")
       if (!this.name || !this.email || !this.password) {
         alert('ユーザーネーム、メールアドレス、またはパスワードが入力されていません。')
         return
       }
       firebase
         .auth()
-        .createUserWithEmailAndPassword(this.user.email, this.user.password)
-        .then((user) => {
-          alert("登録しました。")
-          this.insertUsers(user);
+        .createUserWithEmailAndPassword(this.email, this.password)
+        .then((data) => {
+          this.insertUser(data.user).then(() => {
+            this.$router.replace('/login')
+          })
         })
         .catch((e) => {
           switch (e.code) {
@@ -54,13 +54,17 @@ export default {
               break
             default:
               alert('エラーが起きました。しばらくしてから再度お試しください。')
-              console.log(e.message);
               break
           }
         })
     },
-    async insertUsers(user) {
-      await this.$axios.post("http://127.0.0.1:8000/api/register", user)
+    async insertUser(user) {
+      const sendData = {
+        name: user.displayName,
+        email: user.email,
+        password: user.password
+      }
+      await this.$axios.post("http://127.0.0.1:8000/api/register", sendData)
     }
   },
 }
@@ -80,14 +84,5 @@ export default {
 .form {
   text-align: center;
   margin-top: 20px;
-}
-.input {
-  border-radius: 5px;
-  width: 360px;
-  height: 30px;
-  padding: 7px;
-  border: 1px solid #ccc;
-  margin-bottom: 20px;
-  font-size: 16px;
 }
 </style>
