@@ -15,10 +15,10 @@
 </template>
 
 <script>
+import firebase from '~/plugins/firebase'
 export default {
   data() {
     return {
-      name: '',
       email: '',
       password: ''
     }
@@ -29,6 +29,15 @@ export default {
         alert('メールアドレスまたはパスワードが入力されていません。')
         return
       }
+      firebase
+      .auth()
+      .signInWithEmailAndPassword(this.email, this.password)
+      .then(() => {
+        this.$router.push('http://127.0.0.1:8000/api/post');
+      })
+      .catch(() => {
+        alert('メールアドレスまたはパスワードが正しくありません。')
+      })
     }
   }
 }
