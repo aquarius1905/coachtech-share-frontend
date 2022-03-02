@@ -28,7 +28,6 @@ export default {
   },
   methods: {
     register() {
-      alert("登録開始")
       if (!this.name || !this.email || !this.password) {
         alert('ユーザーネーム、メールアドレス、またはパスワードが入力されていません。')
         return
