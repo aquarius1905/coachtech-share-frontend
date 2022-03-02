@@ -3,15 +3,33 @@
     <Header></Header>
     <div class="input_wrapper">
         <h1 class="title">新規登録</h1>
-        <form class="form">
-          <input v-model="name" type="text" placeholder="ユーザーネーム" class="input" required/>
+        <div class="input_form">
+          <input 
+            v-model="name" 
+            type="text" 
+            placeholder="ユーザーネーム" 
+            class="input" 
+            required maxlength="20"
+          />
           <br/>
-          <input v-model="email" type="email" placeholder="メールアドレス" class="input" required/>
+          <input 
+            v-model="email"
+            type="email" 
+            placeholder="メールアドレス" 
+            class="input" 
+            required
+          />
           <br/>
-          <input v-model="password" type="password" placeholder="パスワード" class="input" required/>
+          <input 
+            v-model="password" 
+            type="password" 
+            placeholder="パスワード" 
+            class="input" 
+            required
+          />
           <br/>
           <button @click="register" class="btn">新規登録</button>
-        </form>
+        </div>
     </div>
   </div>
 </template>
@@ -35,9 +53,8 @@ export default {
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
-        .then((data) => {
-          this.insertUser(data.user).then(() => {
-            this.$router.replace('/login')
+        .then(() => {
+          this.insertUser().then(() => {
           })
         })
         .catch((e) => {
@@ -57,31 +74,15 @@ export default {
           }
         })
     },
-    async insertUser(user) {
+    async insertUser() {
+      console.log('insertUser')
       const sendData = {
-        name: user.displayName,
-        email: user.email,
-        password: user.password
+        name: this.name,
+        email: this.email,
       }
       await this.$axios.post("http://127.0.0.1:8000/api/register", sendData)
+      this.$router.replace('/login')
     }
   },
 }
 </script>
-
-<style>
-.input_wrapper {
-  width: 30%;
-  margin: 40px auto 0;
-  background-color: #f6f7f9;
-  padding: 30px;
-}
-.title {
-  font-size: 30px;
-  text-align: center;
-}
-.form {
-  text-align: center;
-  margin-top: 20px;
-}
-</style>

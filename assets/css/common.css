@@ -2,6 +2,16 @@ a {
   color: #fff;
   text-decoration: none;
 }
+.input_wrapper {
+  width: 40%;
+  margin: 40px auto 0;
+  background-color: #f6f7f9;
+  padding: 30px;
+}
+.input_form {
+  text-align: center;
+  margin-top: 20px;
+}
 .title {
   font-size: 30px;
   text-align: center;
@@ -28,4 +38,8 @@ a {
 .btn:hover {
   cursor: pointer;
   opacity: 0.8;
+}
+.error {
+  color: red;
+  font-weight: bold;
 }
