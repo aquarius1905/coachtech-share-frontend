@@ -40,6 +40,9 @@ a {
   opacity: 0.8;
 }
 .error {
-  color: red;
+  color: tomato;
   font-weight: bold;
+}
+.flex {
+  display: flex;
 }

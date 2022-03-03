@@ -75,7 +75,6 @@ export default {
         })
     },
     async insertUser() {
-      console.log('insertUser')
       const sendData = {
         name: this.name,
         email: this.email,
