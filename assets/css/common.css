@@ -29,20 +29,46 @@ a {
   border: 1px solid #1d50a2;
   border-radius: 10px;
   background-color: #1d50a2;
-  padding: 10px;
   text-align: center;
   color: #fff;
   width: 130px;
   font-size: 16px;
+  cursor: pointer;
 }
 .btn:hover {
-  cursor: pointer;
   opacity: 0.8;
 }
 .error {
+  margin-top: 10px;
   color: tomato;
   font-weight: bold;
 }
 .flex {
   display: flex;
+  justify-content: right;
+}
+li {
+  list-style: none;
+}
+.user_name {
+  font-size: 26px;
+  margin-right: 10px;
+}
+.post_header_img {
+  margin-right: 10px;
+}
+.content {
+  font-size: 20px;
+}
+.likes_num {
+  font-size: 20px;
+  margin-right: 10px;
+}
+.logout_btn {
+  border: 1px solid #1d50a2;
+  background-color: #1d50a2;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: left;
 }
