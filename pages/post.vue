@@ -53,7 +53,7 @@
     </div>
     <div class="post_wrapper">
       <div class="title_wrapper">
-        <h1 class="post_title">ホーム</h1>
+        <h1>ホーム</h1>
       </div>
       <div class="post_list">
         <div v-for="(item, index) in post_items" :key="index" class="post_item">
@@ -153,8 +153,9 @@ export default {
       const params = {
         post_id: postId
       };
-      const datas = await this.$axios.get("http://127.0.0.1:8000/api/likes/posts/" + params.post_id);
-      return datas ? datas.data.data : 0;
+      const response = await this.$axios.get("http://127.0.0.1:8000/api/likes/posts/" + params.post_id);
+      const {data} = {data: response.data};
+      return data ? data.data : 0;
     },
     async insertPost() {//投稿をpostテーブルに追加
       const sendData = {
@@ -215,12 +216,7 @@ export default {
 .post_wrapper {
   width: 100vw;
 }
-.title_wrapper {
-  background-color: #f3f6f9;
-  color: #1d50a2;
-  font-size: 24px;
-  padding: 20px;
-}
+
 .post_main {
   width: 85%;
 }
@@ -260,18 +256,6 @@ export default {
   margin: 20px 0 0 auto;
   cursor: pointer;
   font-weight: bold;
-}
-.post_item {
-  border: 1px solid #f6f7f9;
-  background-color: #1d50a2;
-  color: #f6f7f9;
-  padding: 20px;
-}
-.post_header {
-  align-items: center;
-  vertical-align: center;
-  display: flex;
-  margin-bottom: 20px;
 }
 .post_delete_btn {
   background-color: transparent;
