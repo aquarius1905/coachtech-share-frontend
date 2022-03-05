@@ -2,7 +2,7 @@
   <div class="post">
     <div class="side">
       <div class="side_wrapper">
-        <img src="../assets/image/logo.png" width="40%" height="auto" />
+        <img src="../assets/image/logo.png" width="200px" height="auto" />
         <nav class="nav">
           <ul class="nav_wrapper">
             <li class="nav_item">
@@ -45,7 +45,7 @@
           type="button"
           :disabled="ObserverProps.invalid || !ObserverProps.validated"
           class="post_btn"
-          @click="post"
+          @click="insertPost"
         >
           シェアする
         </button>
@@ -59,14 +59,16 @@
         <div v-for="(item, index) in post_items" :key="index" class="post_item">
           <div class="post_header">
             <h2 class="user_name">{{ item.user }}</h2>
-            <img
-              src="../assets/image/heart.png"
-              width="30px"
-              height="30px"
-              class="post_header_img"
-            />
-            <p class="likes_num">{{ likes }}</p>
-            <button class="post_delete_btn" @click="deletePost(item.id)">
+            <button class="likes_btn" @click="toggleLikesNum(item.user_id, item.post_id)">
+              <img
+                src="../assets/image/heart.png"
+                width="30px"
+                height="30px"
+                class="post_header_img"
+              />
+            </button>
+            <p class="likes_num">{{ item.likes }}</p>
+            <button class="post_delete_btn" @click="deletePost(item)">
               <img
                 src="../assets/image/cross.png"
                 width="30px"
@@ -97,11 +99,9 @@ import firebase from "~/plugins/firebase";
 export default {
   data() {
     return {
-      current_user_email: '',
       current_user: null,
       post_content: null,
       post_items: [],
-      likes: 0
     };
   },
   methods: {
@@ -114,19 +114,10 @@ export default {
           this.$router.replace("/login");
         });
     },
-    async getCurrentUser() {
+    async getCurrentUser() {//usersテーブルからemailで検索してuser情報を取得
       const user = await firebase.auth().currentUser;
-      this.current_user_email = user.email;
-    },
-    async post() {
-      //usersテーブルからemailで検索してidとnameを取得
-      await this.getCurrentUserData();
-      //投稿をpostテーブルに追加
-      await this.insertPost();
-    },
-    async getCurrentUserData() {//usersテーブルからemailで検索してidとnameを取得
       const params = {
-        email: this.current_user_email,
+        email: user.email,
       };
       const currentUserData = await this.$axios.get( "http://127.0.0.1:8000/api/user/",{params});
       this.current_user = currentUserData.data.data[0];
@@ -134,10 +125,17 @@ export default {
     async getPosts() {//全ての投稿を取得
       this.post_items.splice(0);
       const posts = await this.$axios.get("http://127.0.0.1:8000/api/posts");
-      const postsData = posts.data.data;
-      for(const element of postsData) {
+      const postDatas = posts.data.data;
+      for(const element of postDatas) {
         const userName = await this.getUserByID(element.user_id);
-        const postData = { id: element.id, user: userName, post: element.post };
+        const likesCount = await this.getLikesCount(element.id);
+        const postData = { 
+          post_id: element.id, 
+          user_id: element.user_id, 
+          post: element.post, 
+          user: userName,
+          likes: 0
+        };
         this.post_items.unshift(postData);
       }
     },
@@ -148,7 +146,15 @@ export default {
       const targetUser = await this.$axios.get("http://127.0.0.1:8000/api/user/", {params});
       return targetUser.data.data[0].name;
     },  
-    async insertPost() {
+    async getLikesCount(postId) {//良いね数取得
+      const params = {
+        post_id: postId
+      }
+      console.log(postId);
+      const count = await this.$axios.get("http://127.0.0.1:8000/api/likes/posts", {params});
+      return count;
+    },
+    async insertPost() {//投稿をpostテーブルに追加
       const sendData = {
         user_id: this.current_user.id,
         post: this.post_content,
@@ -159,9 +165,36 @@ export default {
       const postData = { user: userName, post: this.post_content };
       this.post_items.unshift(postData);
     },
-    async deletePost(postId) {//投稿の削除
-      await this.$axios.delete("http://127.0.0.1:8000/api/posts/" + postId);
-      this.getPosts();
+    async deletePost(userId, postId) {//投稿の削除
+      if(userId === this.current_user.id)
+      {//自身の投稿なら削除する
+        await this.$axios.delete("http://127.0.0.1:8000/api/posts/" + postId);
+        this.getPosts();
+      }
+      else {//他の人の投稿なら削除しない
+        alert("他の人の投稿は削除できません。");
+      }
+    },
+    async toggleLikesNum(postUserId, postId) {//自分以外の投稿に良いねをする
+      if(postUserId === this.current_user.id) {
+        alert("自分の投稿には「良いね」できません。")
+        return
+      }
+      const params = {
+        user_id: this.current_user.id,
+        post_id: postId
+      };
+      const item = await this.$axios.get( "http://127.0.0.1:8000/api/likes/",{params});
+      if(item) {//自分の「良いね」が存在する場合、削除
+          await this.$axios.delete( "http://127.0.0.1:8000/api/posts/likes", sendData);
+      }
+      else {//自分の良いね数が存在しない場合、良いねを登録
+        const sendData = {
+          user_id: this.current_user.id,
+          post: postId,
+        };
+        await this.$axios.post( "http://127.0.0.1:8000/api/posts/likes", sendData);
+      }
     }
   },
   created() {

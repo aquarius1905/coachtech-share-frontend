@@ -33,6 +33,7 @@ a {
   color: #fff;
   width: 130px;
   font-size: 16px;
+  padding: 5px 10px;
   cursor: pointer;
 }
 .btn:hover {
@@ -64,6 +65,7 @@ li {
   font-size: 20px;
   margin-right: 10px;
 }
+.likes_btn,
 .logout_btn {
   border: 1px solid #1d50a2;
   background-color: #1d50a2;
@@ -71,4 +73,6 @@ li {
   font-size: 16px;
   cursor: pointer;
   text-align: left;
+  vertical-align: center;
+  align-items: center;
 }
