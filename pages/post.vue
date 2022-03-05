@@ -63,7 +63,7 @@
               <img
                 src="../assets/image/heart.png"
                 width="30px"
-                height="30px"
+                height="auto"
                 class="post_header_img"
               />
             </button>
@@ -72,15 +72,18 @@
               <img
                 src="../assets/image/cross.png"
                 width="30px"
-                height="30px"
+                height="auto"
               />
             </button>
-            <img
-              src="../assets/image/detail.png"
-              width="30px"
-              height="30px"
-              class="post_header_img"
-            />
+            <NuxtLink 
+              :to="`/comments/posts/${item.post_id}`"
+              tag="img"
+              :src="require('~/assets/image/detail.png')"
+              class="to_comment"
+              width="40px"
+              height="auto"
+              >
+            </NuxtLink>
           </div>
           <p class="content">{{ item.post }}</p>
         </div>
@@ -134,7 +137,7 @@ export default {
           user_id: element.user_id, 
           post: element.post, 
           user: userName,
-          likes: 0
+          likes: likesCount
         };
         this.post_items.unshift(postData);
       }
@@ -149,10 +152,9 @@ export default {
     async getLikesCount(postId) {//良いね数取得
       const params = {
         post_id: postId
-      }
-      console.log(postId);
-      const count = await this.$axios.get("http://127.0.0.1:8000/api/likes/posts", {params});
-      return count;
+      };
+      const datas = await this.$axios.get("http://127.0.0.1:8000/api/likes/posts/" + params.post_id);
+      return datas ? datas.data.data : 0;
     },
     async insertPost() {//投稿をpostテーブルに追加
       const sendData = {
@@ -276,5 +278,8 @@ export default {
   border: none;
   cursor: pointer;
   margin-right: 40px;
+}
+.to_comment {
+  cursor: pointer;
 }
 </style>
