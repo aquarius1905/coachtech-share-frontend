@@ -161,9 +161,16 @@ export default {
         post: this.post_content,
       };
       //投稿をpostテーブルに追加
-      await this.$axios.post("http://127.0.0.1:8000/api/posts", sendData);
+      const response = await this.$axios.post("http://127.0.0.1:8000/api/posts", sendData);
       const userName = await this.getUserByID(this.current_user.id);
-      const postData = { user: userName, post: this.post_content };
+      const {data} = {data: response.data};
+      const postData = {
+        post_id: data.data[0].id, 
+        user_id: this.current_user.id, 
+        post: this.post_content, 
+        user: userName,
+        likes: 0
+      };
       this.post_items.unshift(postData);
     },
     async deletePost(targetPost) {//投稿の削除
