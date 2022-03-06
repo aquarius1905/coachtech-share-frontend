@@ -94,3 +94,9 @@ li {
   display: flex;
   margin-bottom: 20px;
 }
+.post_delete_btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-right: 40px;
+}

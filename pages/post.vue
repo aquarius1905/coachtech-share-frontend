@@ -93,11 +93,6 @@
 </template>
 
 <script>
-// 1.taroでログイン
-// 2.taroも含め全員分の投稿が表示される
-// 3.taroが投稿
-// 4.シェアボタン押下
-// 5.postメソッドで現在のuser(taro)を取得し、currentUserに格納
 import firebase from "~/plugins/firebase";
 export default {
   data() {
@@ -122,13 +117,15 @@ export default {
       const params = {
         email: user.email,
       };
-      const currentUserData = await this.$axios.get( "http://127.0.0.1:8000/api/user/",{params});
-      this.current_user = currentUserData.data.data[0];
+      const currentUserDatas = await this.$axios.get( "http://127.0.0.1:8000/api/user/",{params});
+      const {currentUserData} = {currentUserData:  currentUserDatas.data}
+      this.current_user = currentUserData.data[0];
     },
     async getPosts() {//全ての投稿を取得
       this.post_items.splice(0);
       const posts = await this.$axios.get("http://127.0.0.1:8000/api/posts");
-      const postDatas = posts.data.data;
+      const {postsData} = {postsData: posts.data};
+      const postDatas = postsData.data;
       for(const element of postDatas) {
         const userName = await this.getUserByID(element.user_id);
         const likesCount = await this.getLikesCount(element.id);
@@ -147,7 +144,8 @@ export default {
         id: userId
       };
       const targetUser = await this.$axios.get("http://127.0.0.1:8000/api/user/", {params});
-      return targetUser.data.data[0].name;
+      const {targetUserData} = {targetUserData: targetUser.data};
+      return targetUserData.data[0].name;
     },  
     async getLikesCount(postId) {//良いね数取得
       const params = {
@@ -155,7 +153,7 @@ export default {
       };
       const response = await this.$axios.get("http://127.0.0.1:8000/api/likes/posts/" + params.post_id);
       const {data} = {data: response.data};
-      return data ? data.data : 0;
+      return data.data ? data.data : 0;
     },
     async insertPost() {//投稿をpostテーブルに追加
       const sendData = {
@@ -168,10 +166,12 @@ export default {
       const postData = { user: userName, post: this.post_content };
       this.post_items.unshift(postData);
     },
-    async deletePost(userId, postId) {//投稿の削除
-      if(userId === this.current_user.id)
+    async deletePost(targetPost) {//投稿の削除
+      console.log(targetPost.user_id);
+      console.log(this.current_user.id);
+      if(targetPost.user_id === this.current_user.id)
       {//自身の投稿なら削除する
-        await this.$axios.delete("http://127.0.0.1:8000/api/posts/" + postId);
+        await this.$axios.delete("http://127.0.0.1:8000/api/posts/" + targetPost.post_id);
         this.getPosts();
       }
       else {//他の人の投稿なら削除しない
@@ -187,17 +187,18 @@ export default {
         user_id: this.current_user.id,
         post_id: postId
       };
-      const item = await this.$axios.get( "http://127.0.0.1:8000/api/likes/",{params});
-      if(item) {//自分の「良いね」が存在する場合、削除
-          await this.$axios.delete( "http://127.0.0.1:8000/api/posts/likes", sendData);
-      }
-      else {//自分の良いね数が存在しない場合、良いねを登録
+      const response = await this.$axios.get("http://127.0.0.1:8000/api/likes/", {params});
+      const {data} = {data: response.data.data};
+      if (data.length === 0) {//自分の良いね数が存在しない場合、良いねを登録
         const sendData = {
           user_id: this.current_user.id,
-          post: postId,
+          post_id: postId,
         };
         await this.$axios.post( "http://127.0.0.1:8000/api/posts/likes", sendData);
+      } else {//自分の「良いね」が存在する場合、削除
+        await this.$axios.delete(`http://127.0.0.1:8000/api/likes/users/${this.current_user.id}/posts/`+ postId);
       }
+      this.getPosts();
     }
   },
   created() {
@@ -209,7 +210,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .post {
   display: flex;
 }
@@ -256,12 +257,6 @@ export default {
   margin: 20px 0 0 auto;
   cursor: pointer;
   font-weight: bold;
-}
-.post_delete_btn {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  margin-right: 40px;
 }
 .to_comment {
   cursor: pointer;
