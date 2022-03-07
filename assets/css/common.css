@@ -74,8 +74,7 @@ li {
   font-size: 20px;
   margin-right: 10px;
 }
-.likes_btn,
-.logout_btn {
+.likes_btn {
   border: 1px solid #1d50a2;
   background-color: #1d50a2;
   color: #fff;
@@ -120,4 +119,19 @@ li {
   margin: 10px 0 0 auto;
   cursor: pointer;
   font-weight: bold;
+}
+.logout_btn {
+  border: 1px solid #1d50a2;
+  background-color: #1d50a2;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+.home_img,
+.logout_img {
+  width: 10%;
+  height: auto;
+  margin-right: 10px;
 }

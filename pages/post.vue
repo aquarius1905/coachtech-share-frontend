@@ -9,8 +9,7 @@
               <NuxtLink to="/post">
                 <img
                   src="~/assets/image/home.png"
-                  width="10%"
-                  height="auto"
+                  class="home_img"
                 />
                 ホーム
               </NuxtLink>
@@ -19,8 +18,7 @@
               <button @click="logout" class="logout_btn">
                 <img
                 src="~/assets/image/logout.png"
-                width="10%"
-                height="auto"
+                class="logout_img"
                 />
                 ログアウト
               </button>
@@ -57,7 +55,7 @@
         <div v-for="(item, index) in post_items" :key="index" class="post_item">
           <div class="post_header">
             <h2 class="user_name">{{ item.user }}</h2>
-            <button class="likes_btn" @click="toggleLikesNum(item.user_id, item.post_id)">
+            <button class="likes_btn" @click="toggleLikesNum(item.user_id, item.post_id, index)">
               <img
                 src="~/assets/image/heart.png"
                 width="30px"
@@ -66,7 +64,7 @@
               />
             </button>
             <p class="likes_num">{{ item.likes }}</p>
-            <button class="post_delete_btn" @click="deletePost(item)">
+            <button class="post_delete_btn" @click="deletePost(item, index)">
               <img
                 src="~/assets/image/cross.png"
                 width="30px"
@@ -165,17 +163,18 @@ export default {
       };
       this.post_items.unshift(post_item);
     },
-    async deletePost(targetPost) {//投稿の削除
+    async deletePost(targetPost, index) {//投稿の削除
       if(targetPost.user_id === vuex.getters.getCurrentUserId)
       {//自身の投稿なら削除する
         await this.$axios.delete("http://127.0.0.1:8000/api/posts/" + targetPost.post_id);
-        this.getPosts();
+        await this.$axios.delete("http://127.0.0.1:8000/api/comments/posts/" + targetPost.post_id);
+        this.post_items.splice(index, 1);
       }
       else {//他の人の投稿なら削除しない
         alert("他の人の投稿は削除できません。");
       }
     },
-    async toggleLikesNum(postUserId, postId) {//自分以外の投稿に良いねをする
+    async toggleLikesNum(postUserId, postId, index) {//自分以外の投稿に良いねをする
       const currentUserId = vuex.getters.getCurrentUserId;
       if(postUserId === currentUserId) {
         alert("自分の投稿には「良いね」できません。");
