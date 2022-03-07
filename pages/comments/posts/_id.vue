@@ -1,57 +1,162 @@
 <template>
-  <div class="comment">
-    <div class="title_wrapper">
-      <h1 class="page_title">コメント</h1>
-    </div>
-    <div class="">
+  <div class="comment flex">
+    <Side></Side>
+    <div class="post_wrapper">
+      <div class="title_wrapper">
+        <h1>コメント</h1>
+      </div>
       <div class="post_item">
         <div class="post_header">
-          <h2 class="user_name">test</h2>
+          <h2 class="user_name">{{ current_post.user }}</h2>
           <button class="likes_btn" @click="toggleLikesNum">
             <img
-              src="../../../assets/image/heart.png"
+              src="~/assets/image/heart.png"
               width="30px"
               height="auto"
               class="post_header_img"
             />
           </button>
-          <p class="likes_num">0</p>
+          <p class="likes_num">{{ current_post.likes }}</p>
           <button class="post_delete_btn" @click="deletePost">
             <img
-              src="../../../assets/image/cross.png"
+              src="~/assets/image/cross.png"
               width="30px"
               height="auto"
             />
           </button>
         </div>
-        <p class="content">test</p>
+        <p class="content">{{ this.current_post.post }}</p>
+      </div>
+      <div class="comment_wrapper">
+          <div class="sub_title_wrapper">
+            <h2>コメント</h2>
+          </div>
+          <div class="comment_list">
+            <div v-for="(item, index) in comment_items" :key="index" class="comment_item">
+              <div class="comment_header">
+                <h3 class="comment_user_name">{{ item.user_name }}</h3>
+                <p class="likes_num">{{ item.comment }}</p>
+              </div>
+            </div>
+          </div>
+        <validation-observer ref="obs" v-slot="ObserverProps">
+          <div class="comment_form">
+            <validation-provider v-slot="{ errors }" rules="required|max:120">
+              <textarea
+              v-model="comment_textarea"
+              name="コメント"
+              class="comment_textarea"
+              ></textarea>
+              <div class="error">{{ errors[0] }}</div>
+              <br/>
+              <button 
+                type="button" 
+                :disabled="ObserverProps.invalid || !ObserverProps.validated"
+                class="comment_btn"
+                @click="insertComment"
+                >
+                コメント
+              </button>
+            </validation-provider>
+          </div>
+        </validation-observer>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import vuex from "../../../src/store/index";
+import common from '@/plugins/common'
 export default {
   data() {
     return {
-      post_id: this.$route.params.id,
-      current_post: null
-      
+      current_post_id: this.$route.params.id,
+      current_post: {},
+      comment_textarea: null,
+      comment_items: []
     }
   },
   methods: {
     async getCurrentPost() {
-      const response = await this.$axios.get(`http://127.0.0.1:8000/api/posts/${this.post_id}`);
-      const {data} = {data: response.data};
-      this.current_post = data.data[0];
-      console.log(this.current_post);
+      const response = await this.$axios.get("http://127.0.0.1:8000/api/posts/" + this.current_post_id);
+      const {data} = {data: response.data}
+      const target_post = data.data[0];
+      const user_name = await common.getUserNameById(target_post.user_id);
+      this.current_post = {
+        user_id: target_post.user_id,
+        post: target_post.post,
+        user: user_name,
+        likes: data.like_num,
+      };
+    },
+    async getComments() {
+      this.comment_items.splice(0);
+      const comments = await this.$axios.get("http://127.0.0.1:8000/api/comments/posts/" + this.current_post_id);
+      const data = {data: comments.data};
+      if(!data.data) {
+        return;
+      }
+      const dataArray = data.data.data;
+      for(const element of dataArray) {
+        const user_name = await common.getUserNameById(element.user_id);
+        const comment_item = { 
+          user_name: user_name, 
+          comment: element.comment
+        };
+        this.comment_items.unshift(comment_item);
+      }
+    },
+    async insertComment() {//コメントを投稿する
+      const current_user_id = vuex.getters.getCurrentUserId;
+      const sendData = {
+        user_id: current_user_id,
+        post_id: this.current_post_id,
+        comment: this.comment_textarea
+      };
+      //コメントをcommentsテーブルに追加
+      const response = await this.$axios.post("http://127.0.0.1:8000/api/comments/posts", sendData);
+      const current_user_name = vuex.getters.getCurrentUserName;
+      const comment_item = {
+        user_name: current_user_name,
+        comment: this.comment_textarea
+      }
+      this.comment_items.unshift(comment_item);
+    },
+    async toggleLikesNum() {
+    },
+    async deletePost() {
     }
   },
   created() {
     this.getCurrentPost();
+    this.getComments();
   }
 }
 </script>
 
 <style scoped>
+.sub_title_wrapper {
+  text-align: center;
+  background-color: #f3f6f9;
+  color: #1d50a2;
+  font-size: 20px;
+  padding: 20px;
+}
+.comment_form {
+  background: #1d50a2;
+  text-align: center;
+  padding: 20px;
+}
+.comment_user_name {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+.comment_textarea {
+  width: 90%;
+  height: 50px;
+  resize: none;
+  background-color: #f6f7f9;
+  font-size: 16px;
+}
 </style>

@@ -25,7 +25,6 @@ export default {
   },
   methods: {
     login() {
-      console.log('login');
       if (!this.email || !this.password) {
         alert('メールアドレスまたはパスワードが入力されていません。')
         return

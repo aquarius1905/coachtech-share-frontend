@@ -33,10 +33,8 @@
       <br />
       <textarea
         v-model="post_content"
-        id="post_content"
+        class="post_textarea"
         name="シェア"
-        width=""
-        rows="8"
       ></textarea>
       <div class="error">{{ errors[0] }}</div>
     </validation-provider>
@@ -53,11 +51,45 @@
 </template>
 
 <script>
+import firebase from "~/plugins/firebase";
 export default {
-  
+  data() {
+    return {
+      current_user: null,
+      post_content: null,
+      post_items: [],
+    };
+  },
+  methods: {
+    logout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          alert("ログアウトが完了しました。");
+          this.$router.replace("/login");
+        });
+    },
+    insertPost() {
+
+    }
+  }
 }
 </script>
 
 <style>
-
+.side {
+  width: 15%;
+  height: 100vh;
+  background-color: #1d50a2;
+  color: #f6f7f9;
+  padding: 20px;
+}
+.side_wrapper {
+  margin-bottom: 40px;
+}
+.logout_item {
+  display: flex;
+  align-items: center;
+}
 </style>

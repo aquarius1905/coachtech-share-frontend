@@ -1,14 +1,14 @@
 <template>
-  <div class="post">
+  <div class="post flex">
     <div class="side">
       <div class="side_wrapper">
-        <img src="../assets/image/logo.png" width="200px" height="auto" />
-        <nav class="nav">
+        <img src="~/assets/image/logo.png" width="200px" height="auto" />
+        <nav>
           <ul class="nav_wrapper">
             <li class="nav_item">
               <NuxtLink to="/post">
                 <img
-                  src="../assets/image/home.png"
+                  src="~/assets/image/home.png"
                   width="10%"
                   height="auto"
                 />
@@ -18,7 +18,7 @@
             <li class="nav_item logout_item">
               <button @click="logout" class="logout_btn">
                 <img
-                src="../assets/image/logout.png"
+                src="~/assets/image/logout.png"
                 width="10%"
                 height="auto"
                 />
@@ -30,14 +30,12 @@
       </div>
       <validation-observer ref="obs" v-slot="ObserverProps">
         <validation-provider v-slot="{ errors }" rules="required|max:120">
-          <label for="post_content">シェア</label>
+          <label for="post_textarea">シェア</label>
           <br />
           <textarea
-            v-model="post_content"
-            id="post_content"
+            v-model="post_textarea"
+            class="post_textarea"
             name="シェア"
-            width=""
-            rows="8"
           ></textarea>
           <div class="error">{{ errors[0] }}</div>
         </validation-provider>
@@ -61,7 +59,7 @@
             <h2 class="user_name">{{ item.user }}</h2>
             <button class="likes_btn" @click="toggleLikesNum(item.user_id, item.post_id)">
               <img
-                src="../assets/image/heart.png"
+                src="~/assets/image/heart.png"
                 width="30px"
                 height="auto"
                 class="post_header_img"
@@ -70,7 +68,7 @@
             <p class="likes_num">{{ item.likes }}</p>
             <button class="post_delete_btn" @click="deletePost(item)">
               <img
-                src="../assets/image/cross.png"
+                src="~/assets/image/cross.png"
                 width="30px"
                 height="auto"
               />
@@ -94,11 +92,12 @@
 
 <script>
 import firebase from "~/plugins/firebase";
+import vuex from "~/src/store/index";
+import common from '@/plugins/common'
 export default {
   data() {
     return {
-      current_user: null,
-      post_content: null,
+      post_textarea: null,
       post_items: [],
     };
   },
@@ -119,7 +118,7 @@ export default {
       };
       const currentUserDatas = await this.$axios.get( "http://127.0.0.1:8000/api/user/",{params});
       const {currentUserData} = {currentUserData:  currentUserDatas.data}
-      this.current_user = currentUserData.data[0];
+      this.setCurrentUser(currentUserData.data[0]);
     },
     async getPosts() {//全ての投稿を取得
       this.post_items.splice(0);
@@ -127,26 +126,18 @@ export default {
       const {postsData} = {postsData: posts.data};
       const postDatas = postsData.data;
       for(const element of postDatas) {
-        const userName = await this.getUserByID(element.user_id);
+        const userName = await common.getUserNameById(element.user_id);
         const likesCount = await this.getLikesCount(element.id);
-        const postData = { 
+        const post_item = { 
           post_id: element.id, 
           user_id: element.user_id, 
           post: element.post, 
           user: userName,
           likes: likesCount
         };
-        this.post_items.unshift(postData);
+        this.post_items.unshift(post_item);
       }
     },
-    async getUserByID(userId) { //ユーザーidからユーザー名を取得
-      const params = {
-        id: userId
-      };
-      const targetUser = await this.$axios.get("http://127.0.0.1:8000/api/user/", {params});
-      const {targetUserData} = {targetUserData: targetUser.data};
-      return targetUserData.data[0].name;
-    },  
     async getLikesCount(postId) {//良いね数取得
       const params = {
         post_id: postId
@@ -156,27 +147,26 @@ export default {
       return data.data ? data.data : 0;
     },
     async insertPost() {//投稿をpostテーブルに追加
+      const currentUserId = vuex.getters.getCurrentUserId;
       const sendData = {
-        user_id: this.current_user.id,
-        post: this.post_content,
+        user_id: currentUserId,
+        post: this.post_textarea,
       };
       //投稿をpostテーブルに追加
       const response = await this.$axios.post("http://127.0.0.1:8000/api/posts", sendData);
-      const userName = await this.getUserByID(this.current_user.id);
       const {data} = {data: response.data};
-      const postData = {
-        post_id: data.data[0].id, 
-        user_id: this.current_user.id, 
-        post: this.post_content, 
-        user: userName,
+      const currentUserName = vuex.getters.getCurrentUserName;
+      const post_item = {
+        post_id: data.data.id, 
+        user_id: currentUserId, 
+        post: this.post_textarea, 
+        user: currentUserName,
         likes: 0
       };
-      this.post_items.unshift(postData);
+      this.post_items.unshift(post_item);
     },
     async deletePost(targetPost) {//投稿の削除
-      console.log(targetPost.user_id);
-      console.log(this.current_user.id);
-      if(targetPost.user_id === this.current_user.id)
+      if(targetPost.user_id === vuex.getters.getCurrentUserId)
       {//自身の投稿なら削除する
         await this.$axios.delete("http://127.0.0.1:8000/api/posts/" + targetPost.post_id);
         this.getPosts();
@@ -186,71 +176,59 @@ export default {
       }
     },
     async toggleLikesNum(postUserId, postId) {//自分以外の投稿に良いねをする
-      if(postUserId === this.current_user.id) {
-        alert("自分の投稿には「良いね」できません。")
-        return
+      const currentUserId = vuex.getters.getCurrentUserId;
+      if(postUserId === currentUserId) {
+        alert("自分の投稿には「良いね」できません。");
+        return;
       }
       const params = {
-        user_id: this.current_user.id,
+        user_id: currentUserId,
         post_id: postId
       };
       const response = await this.$axios.get("http://127.0.0.1:8000/api/likes/", {params});
       const {data} = {data: response.data.data};
       if (data.length === 0) {//自分の良いね数が存在しない場合、良いねを登録
         const sendData = {
-          user_id: this.current_user.id,
+          user_id: vuex.getters.getCurrentUserId,
           post_id: postId,
         };
         await this.$axios.post( "http://127.0.0.1:8000/api/posts/likes", sendData);
       } else {//自分の「良いね」が存在する場合、削除
-        await this.$axios.delete(`http://127.0.0.1:8000/api/likes/users/${this.current_user.id}/posts/`+ postId);
+        await this.$axios.delete(`http://127.0.0.1:8000/api/likes/users/${currentUserId}/posts/`+ postId);
       }
       this.getPosts();
+    },
+    toCommentPage(item) {
+      this.$router.push(`/comments/posts/${item.post_id}`);
+    },
+    setCurrentUser(currentUser) {
+      vuex.dispatch('setCurrentUserAction', currentUser);
     }
   },
   created() {
-    //全ての投稿を取得
-    this.getPosts();
     //現在ログインしているユーザーを取得
     this.getCurrentUser();
+    //全ての投稿を取得
+    this.getPosts();
   },
 };
 </script>
 
 <style>
-.post {
-  display: flex;
-}
-.post_wrapper {
-  width: 100vw;
-}
-
 .post_main {
   width: 85%;
-}
-.side {
-  width: 15%;
-  height: 100vh;
-  background-color: #1d50a2;
-  color: #f6f7f9;
-  padding: 20px;
-}
-.side_wrapper {
-  margin-bottom: 40px;
 }
 .nav_item {
   list-style: none;
   margin-top: 15px;
 }
-.logout_item {
-  display: flex;
-  align-items: center;
-}
-#post_content {
-  width: 98%;
+.post_textarea {
+  width: 100%;
+  height: 16%;
   margin-top: 20px;
   resize: none;
   background-color: #f6f7f9;
+  font-size: 16px;
 }
 .post_btn {
   display: block;

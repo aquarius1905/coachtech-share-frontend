@@ -2,6 +2,9 @@ a {
   color: #fff;
   text-decoration: none;
 }
+.flex {
+  display: flex;
+}
 .input_wrapper {
   width: 40%;
   margin: 40px auto 0;
@@ -46,7 +49,7 @@ a {
   opacity: 0.8;
 }
 .error {
-  margin-top: 10px;
+  margin: 10px 0;
   color: tomato;
   font-weight: bold;
 }
@@ -82,7 +85,8 @@ li {
   vertical-align: center;
   align-items: center;
 }
-.post_item {
+.post_item,
+.comment_item {
   border: 1px solid #f6f7f9;
   background-color: #1d50a2;
   color: #f6f7f9;
@@ -99,4 +103,21 @@ li {
   border: none;
   cursor: pointer;
   margin-right: 40px;
+}
+.post_wrapper {
+  width: 100vw;
+}
+.post_btn,
+.comment_btn {
+  display: block;
+  border: 1px solid #f6f7f9;
+  border-radius: 10px;
+  background-color: #f6f7f9;
+  padding: 10px;
+  color: #1d50a2;
+  width: 110px;
+  font-size: 16px;
+  margin: 10px 0 0 auto;
+  cursor: pointer;
+  font-weight: bold;
 }
