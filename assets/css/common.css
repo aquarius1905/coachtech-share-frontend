@@ -53,7 +53,7 @@ a {
   color: tomato;
   font-weight: bold;
 }
-.flex {
+.nav__list {
   display: flex;
   justify-content: right;
 }

@@ -2,8 +2,8 @@
   <div class="header">
     <div class="header__wrapper">
       <img src="../assets/image/logo.png" width="10%" height="10%">
-      <nav class="nav">
-        <ul class="nav__wrapper">
+      <nav>
+        <ul class="nav__list">
           <li class="nav__item"><NuxtLink to="/">新規登録</NuxtLink></li>
           <li class="nav__item"><NuxtLink to="/login">ログイン</NuxtLink></li>
         </ul>
@@ -24,11 +24,7 @@
   justify-content: space-between;
   align-items: center;
 }
-.nav__wrapper {
-  display: flex;
-}
 .nav__item {
-  list-style: none;
   margin-right: 20px;
 }
 </style>

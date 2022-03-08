@@ -79,7 +79,7 @@ export default {
       return data.data ? data.data : 0;
     },
     async deletePost(targetPost, index) {//投稿の削除
-      if(await common.deletePost(targetPost)) {
+      if(await common.deletePost(targetPost.user_id, targetPost.post_id)) {
         this.post_items.splice(index, 1);
       }
     },

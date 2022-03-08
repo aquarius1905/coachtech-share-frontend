@@ -8,7 +8,7 @@
       <div class="post_item">
         <div class="post_header">
           <h2 class="user_name">{{ current_post.user }}</h2>
-          <button class="likes_btn" @click="toggleLikesNum(current_post)">
+          <button class="likes_btn" @click="toggleLikesNum">
             <img
               src="~/assets/image/heart.png"
               width="30px"
@@ -25,7 +25,7 @@
             />
           </button>
         </div>
-        <p class="content">{{ this.current_post.post }}</p>
+        <p class="content">{{ current_post.post }}</p>
       </div>
       <div class="comment_wrapper">
           <div class="sub_title_wrapper">
@@ -123,8 +123,12 @@ export default {
       this.comment_items.unshift(commentItem);
       this.comment_textarea = null;
     },
-    async toggleLikesNum(current_post) {//自分以外の投稿に良いねをする
-      const results = await common.toggleLikesNum(current_post,user_id, this.current_post_id);
+    async toggleLikesNum() {//自分以外の投稿に良いねをする
+      const results = await common.toggleLikesNum
+      (
+        this.current_post.user_id, 
+        this.current_post_id
+      );
       if(!results.result) {
         return;
       }
@@ -135,7 +139,7 @@ export default {
       }
     },
     async deletePost() {//投稿を削除する
-      if(await common.deletePost(this.current_post)) {
+      if(await common.deletePost(this.current_post.user_id, this.current_post_id)) {
         this.$router.push('/post')
       }
     }
