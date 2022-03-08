@@ -50,11 +50,11 @@
 
 <script>
 import firebase from "~/plugins/firebase";
+import common from '~/plugins/common'
 export default {
   data() {
     return {
-      current_user: null,
-      post_content: null,
+      post_textarea: null,
       post_items: [],
     };
   },
@@ -64,12 +64,29 @@ export default {
         .auth()
         .signOut()
         .then(() => {
-          alert("ログアウトが完了しました。");
-          this.$router.replace("/login");
+          this.$router.replace("/login").then(() => {
+            alert("ログアウトが完了しました。");
+          })
         });
     },
-    insertPost() {
-
+    async insertPost() {
+      const currentUserId = await common.getCurrentUserId();
+      const sendData = {
+        user_id: currentUserId,
+        post: this.post_textarea,
+      };
+      //投稿をpostテーブルに追加
+      const response = await this.$axios.post("http://127.0.0.1:8000/api/posts", sendData);
+      const {data} = {data: response.data};
+      const currentUserName = await common.getUserNameById(currentUserId);
+      const postItem = {
+        post_id: data.data.id, 
+        user_id: currentUserId, 
+        post: this.post_textarea, 
+        user: currentUserName,
+        likes: 0
+      };
+      this.$emit('addPostItem', postItem);
     }
   }
 }

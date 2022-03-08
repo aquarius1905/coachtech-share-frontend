@@ -8,7 +8,7 @@
       <div class="post_item">
         <div class="post_header">
           <h2 class="user_name">{{ current_post.user }}</h2>
-          <button class="likes_btn" @click="toggleLikesNum">
+          <button class="likes_btn" @click="toggleLikesNum(current_post)">
             <img
               src="~/assets/image/heart.png"
               width="30px"
@@ -66,7 +66,6 @@
 </template>
 
 <script>
-import vuex from "../../../src/store/index";
 import common from '@/plugins/common'
 export default {
   data() {
@@ -78,7 +77,7 @@ export default {
     }
   },
   methods: {
-    async getCurrentPost() {
+    async getCurrentPost() {//コメント対象の投稿を取得する
       const response = await this.$axios.get("http://127.0.0.1:8000/api/posts/" + this.current_post_id);
       const {data} = {data: response.data}
       const target_post = data.data[0];
@@ -90,7 +89,7 @@ export default {
         likes: data.like_num,
       };
     },
-    async getComments() {
+    async getAllComments() {//全てのコメントを表示する
       this.comment_items.splice(0);
       const comments = await this.$axios.get("http://127.0.0.1:8000/api/comments/posts/" + this.current_post_id);
       const data = {data: comments.data};
@@ -108,29 +107,42 @@ export default {
       }
     },
     async insertComment() {//コメントを投稿する
-      const current_user_id = vuex.getters.getCurrentUserId;
+      const currentUserId = await common.getCurrentUserId();
       const sendData = {
-        user_id: current_user_id,
+        user_id: currentUserId,
         post_id: this.current_post_id,
         comment: this.comment_textarea
       };
       //コメントをcommentsテーブルに追加
-      const response = await this.$axios.post("http://127.0.0.1:8000/api/comments/posts", sendData);
-      const current_user_name = vuex.getters.getCurrentUserName;
-      const comment_item = {
-        user_name: current_user_name,
+      await this.$axios.post("http://127.0.0.1:8000/api/comments/posts", sendData);
+      const currentUserName = await common.getUserNameById(currentUserId);
+      const commentItem = {
+        user_name: currentUserName,
         comment: this.comment_textarea
       }
-      this.comment_items.unshift(comment_item);
+      this.comment_items.unshift(commentItem);
+      this.comment_textarea = null;
     },
-    async toggleLikesNum() {
+    async toggleLikesNum(current_post) {//自分以外の投稿に良いねをする
+      const results = await common.toggleLikesNum(current_post,user_id, this.current_post_id);
+      if(!results.result) {
+        return;
+      }
+      if(results.likes) {
+        this.current_post.likes++;
+      } else {
+        this.current_post.likes--;
+      }
     },
-    async deletePost() {
+    async deletePost() {//投稿を削除する
+      if(await common.deletePost(this.current_post)) {
+        this.$router.push('/post')
+      }
     }
   },
   created() {
     this.getCurrentPost();
-    this.getComments();
+    this.getAllComments();
   }
 }
 </script>
