@@ -2,7 +2,7 @@
   <div class="register">
     <Header></Header>
     <div class="input_wrapper">
-        <h1 class="title">新規登録</h1>
+        <h1 class="ttl">新規登録</h1>
         <div class="input_form">
           <input 
             v-model="name" 

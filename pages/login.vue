@@ -2,7 +2,7 @@
   <div class="login">
     <Header></Header>
     <div class="input_wrapper">
-        <h1 class="title">ログイン</h1>
+        <h1 class="ttl">ログイン</h1>
         <div class="input_form">
           <input v-model="email" type="text" placeholder="メールアドレス" class="input" required/>
           <br/>

@@ -2,7 +2,7 @@
   <div class="comment flex">
     <Side></Side>
     <div class="post_wrapper">
-      <div class="title_wrapper">
+      <div class="ttl_wrapper">
         <h1>コメント</h1>
       </div>
       <div class="post_item">

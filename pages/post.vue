@@ -2,7 +2,7 @@
   <div class="post flex">
     <Side @addPostItem="addPostItem($event)"></Side>
     <div class="post_wrapper">
-      <div class="title_wrapper">
+      <div class="ttl_wrapper">
         <h1>ホーム</h1>
       </div>
       <div class="post_list">

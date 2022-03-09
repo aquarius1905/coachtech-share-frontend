@@ -15,14 +15,14 @@ a {
   text-align: center;
   margin-top: 20px;
 }
-.title {
+.ttl {
   font-size: 30px;
   text-align: center;
 }
-.title_wrapper {
+.ttl_wrapper {
   background-color: #eee;
   color: #1d50a2;
-  font-size: 24px;
+  font-size: 30px;
   padding: 20px;
 }
 .input {
