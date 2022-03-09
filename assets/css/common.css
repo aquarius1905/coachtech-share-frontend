@@ -8,7 +8,7 @@ a {
 .input_wrapper {
   width: 40%;
   margin: 40px auto 0;
-  background-color: #f6f7f9;
+  background-color: #eee;
   padding: 30px;
 }
 .input_form {
@@ -20,7 +20,7 @@ a {
   text-align: center;
 }
 .title_wrapper {
-  background-color: #f3f6f9;
+  background-color: #eee;
   color: #1d50a2;
   font-size: 24px;
   padding: 20px;
@@ -52,10 +52,7 @@ a {
   margin: 10px 0;
   color: tomato;
   font-weight: bold;
-}
-.nav__list {
-  display: flex;
-  justify-content: right;
+  font-size: 16px;
 }
 li {
   list-style: none;
@@ -67,7 +64,8 @@ li {
 .post_header_img {
   margin-right: 10px;
 }
-.content {
+.post_content,
+.comment_content {
   font-size: 20px;
 }
 .likes_num {
@@ -86,9 +84,9 @@ li {
 }
 .post_item,
 .comment_item {
-  border: 1px solid #f6f7f9;
+  border: 1px solid #eee;
   background-color: #1d50a2;
-  color: #f6f7f9;
+  color: #eee;
   padding: 20px;
 }
 .post_header {
@@ -109,9 +107,9 @@ li {
 .post_btn,
 .comment_btn {
   display: block;
-  border: 1px solid #f6f7f9;
+  border: 1px solid #eee;
   border-radius: 10px;
-  background-color: #f6f7f9;
+  background-color: #eee;
   padding: 10px;
   color: #1d50a2;
   width: 110px;
@@ -119,15 +117,6 @@ li {
   margin: 10px 0 0 auto;
   cursor: pointer;
   font-weight: bold;
-}
-.logout_btn {
-  border: 1px solid #1d50a2;
-  background-color: #1d50a2;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-  text-align: left;
-  padding: 0;
 }
 .home_img,
 .logout_img {

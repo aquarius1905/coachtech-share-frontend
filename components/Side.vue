@@ -40,7 +40,7 @@
         type="button"
         :disabled="ObserverProps.invalid || !ObserverProps.validated"
         class="post_btn"
-        @click="insertPost"
+        @click="addPost"
       >
         シェアする
       </button>
@@ -59,7 +59,7 @@ export default {
     };
   },
   methods: {
-    logout() {
+    logout() {//ログアウトする
       firebase
         .auth()
         .signOut()
@@ -69,7 +69,7 @@ export default {
           })
         });
     },
-    async insertPost() {
+    async addPost() {//投稿する
       const currentUserId = await common.getCurrentUserId();
       const sendData = {
         user_id: currentUserId,
@@ -92,19 +92,40 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .side {
   width: 15%;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #1d50a2;
-  color: #f6f7f9;
+  color: #eee;
   padding: 20px;
 }
 .side_wrapper {
   margin-bottom: 40px;
 }
+.nav_item {
+  list-style: none;
+  margin-top: 15px;
+}
 .logout_item {
   display: flex;
   align-items: center;
+}
+.post_textarea {
+  width: 100%;
+  height: 200px;
+  margin-top: 20px;
+  resize: none;
+  background-color: #eee;
+  font-size: 16px;
+}
+.logout_btn {
+  border: 1px solid #1d50a2;
+  background-color: #1d50a2;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
 }
 </style>

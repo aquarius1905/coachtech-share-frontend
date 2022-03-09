@@ -9,9 +9,7 @@ export default {
     const {targetUserData} = {targetUserData: targetUser.data};
     return targetUserData.data[0].name;
   },
-
-  // Firebase Auth が初期化されたら
-  initFirebaseAuth() {
+  initFirebaseAuth() {// Firebase Authの初期化
     return new Promise((resolve) => {
       let unsubscribe = firebase.auth().onAuthStateChanged((user) => {
         // user オブジェクトを resolve
@@ -44,7 +42,7 @@ export default {
     };
     const response = await axios.get("http://127.0.0.1:8000/api/likes", { params });
     const { data } = { data: response.data };
-    if (data.data.length === 0) {//自分の良いね数が存在しない場合、良いねを登録
+    if (data.data === 0) {//自分の良いね数が存在しない場合、良いねを登録
       await axios.post("http://127.0.0.1:8000/api/posts/likes", params);
       return { result: true, likes: true };
     } else {//自分の「良いね」が存在する場合、削除
@@ -52,21 +50,21 @@ export default {
       return { result: true, likes: false };
     }
   },
-  async deletePost(targetPostUserId, targetPostId) {//投稿の削除
-    console.log(targetPostUserId);
-    console.log(targetPostId);
+  async deletePost(targetPostUserId, targetPostId) {//投稿を削除する
     const currentUserId = await this.getCurrentUserId();
-    if (targetPostUserId !== currentUserId) {//他の人の投稿なら削除しない
+    if (targetPostUserId !== currentUserId) {
       alert("他の人の投稿は削除できません。");
+      return false;
+    }
+    if (!confirm('削除しますか？')) {
       return false;
     }
     //自身の投稿なら削除する
     await axios.delete("http://127.0.0.1:8000/api/posts/" + targetPostId);
     const comments = await axios.get("http://127.0.0.1:8000/api/comments/posts/" + targetPostId);
     const data = { data: comments.data };
-    if (data.data.length > 0) {//コメントも削除
+    if (data.data.length > 0) {//コメントも削除する
       await axios.delete("http://127.0.0.1:8000/api/comments/posts/" + targetPostId);
-      console.log('deleteCommentSuccess');
     }
     return true;
   },

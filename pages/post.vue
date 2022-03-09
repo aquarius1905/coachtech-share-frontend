@@ -35,7 +35,7 @@
               >
             </NuxtLink>
           </div>
-          <p class="content">{{ item.post }}</p>
+          <p class="post_content">{{ item.post }}</p>
         </div>
       </div>
     </div>
@@ -47,7 +47,6 @@ import common from '@/plugins/common'
 export default {
   data() {
     return {
-      post_textarea: null,
       post_items: [],
     };
   },
@@ -78,7 +77,7 @@ export default {
       const {data} = {data: response.data};
       return data.data ? data.data : 0;
     },
-    async deletePost(targetPost, index) {//投稿の削除
+    async deletePost(targetPost, index) {//投稿を削除する
       if(await common.deletePost(targetPost.user_id, targetPost.post_id)) {
         this.post_items.splice(index, 1);
       }
@@ -106,35 +105,7 @@ export default {
 };
 </script>
 
-<style>
-.post_main {
-  width: 85%;
-}
-.nav_item {
-  list-style: none;
-  margin-top: 15px;
-}
-.post_textarea {
-  width: 100%;
-  height: 16%;
-  margin-top: 20px;
-  resize: none;
-  background-color: #f6f7f9;
-  font-size: 16px;
-}
-.post_btn {
-  display: block;
-  border: 1px solid #f6f7f9;
-  border-radius: 10px;
-  background-color: #f6f7f9;
-  padding: 10px;
-  color: #1d50a2;
-  width: 110px;
-  font-size: 16px;
-  margin: 20px 0 0 auto;
-  cursor: pointer;
-  font-weight: bold;
-}
+<style scoped>
 .to_comment {
   cursor: pointer;
 }

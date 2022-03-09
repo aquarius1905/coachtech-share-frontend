@@ -25,7 +25,7 @@
             />
           </button>
         </div>
-        <p class="content">{{ current_post.post }}</p>
+        <p class="post_content">{{ current_post.post }}</p>
       </div>
       <div class="comment_wrapper">
           <div class="sub_title_wrapper">
@@ -35,7 +35,7 @@
             <div v-for="(item, index) in comment_items" :key="index" class="comment_item">
               <div class="comment_header">
                 <h3 class="comment_user_name">{{ item.user_name }}</h3>
-                <p class="likes_num">{{ item.comment }}</p>
+                <p class="comment_content">{{ item.comment }}</p>
               </div>
             </div>
           </div>
@@ -48,12 +48,11 @@
               class="comment_textarea"
               ></textarea>
               <div class="error">{{ errors[0] }}</div>
-              <br/>
               <button 
                 type="button" 
                 :disabled="ObserverProps.invalid || !ObserverProps.validated"
                 class="comment_btn"
-                @click="insertComment"
+                @click="addComment"
                 >
                 コメント
               </button>
@@ -106,7 +105,7 @@ export default {
         this.comment_items.unshift(comment_item);
       }
     },
-    async insertComment() {//コメントを投稿する
+    async addComment() {//コメントを投稿する
       const currentUserId = await common.getCurrentUserId();
       const sendData = {
         user_id: currentUserId,
@@ -154,12 +153,13 @@ export default {
 <style scoped>
 .sub_title_wrapper {
   text-align: center;
-  background-color: #f3f6f9;
+  background-color: #eee;
   color: #1d50a2;
   font-size: 20px;
   padding: 20px;
 }
 .comment_form {
+  border: 1px solid #eee;
   background: #1d50a2;
   text-align: center;
   padding: 20px;
@@ -172,7 +172,7 @@ export default {
   width: 90%;
   height: 50px;
   resize: none;
-  background-color: #f6f7f9;
+  background-color: #eee;
   font-size: 16px;
 }
 </style>
