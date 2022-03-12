@@ -1,5 +1,6 @@
 import Vue from 'vue';
-import { ValidationProvider, ValidationObserver, extend, localize } from 'vee-validate';
+import { ValidationProvider, ValidationObserver, extend, localize, setInteractionMode } from 'vee-validate';
+setInteractionMode('passive');
 import * as originalRules from 'vee-validate/dist/rules';
 
 // 全てのルールをインポート

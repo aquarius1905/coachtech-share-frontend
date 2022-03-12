@@ -7,7 +7,7 @@
       </div>
       <div class="post_item">
         <div class="post_header">
-          <h2 class="user_name">{{ current_post.user }}</h2>
+          <h2 class="user_name">{{ current_post.user_name }}</h2>
           <button class="likes_btn" @click="toggleLikesNum">
             <img
               src="~/assets/image/heart.png"
@@ -16,7 +16,7 @@
               class="post_header_img"
             />
           </button>
-          <p class="likes_num">{{ current_post.likes }}</p>
+          <p class="likes_num">{{ current_post.like_count }}</p>
           <button class="post_delete_btn" @click="deletePost">
             <img
               src="~/assets/image/cross.png"
@@ -39,9 +39,9 @@
               </div>
             </div>
           </div>
-        <validation-observer ref="obs" v-slot="ObserverProps">
+        <validation-observer ref="obs" tag="div">
           <div class="comment_form">
-            <validation-provider v-slot="{ errors }" rules="required|max:120">
+            <validation-provider mode="passive" v-slot="{ errors }" rules="required|max:120">
               <textarea
               v-model="comment_textarea"
               name="コメント"
@@ -50,7 +50,6 @@
               <div class="error">{{ errors[0] }}</div>
               <button 
                 type="button" 
-                :disabled="ObserverProps.invalid || !ObserverProps.validated"
                 class="comment_btn"
                 @click="addComment"
                 >
@@ -77,35 +76,32 @@ export default {
   },
   methods: {
     async getCurrentPost() {//コメント対象の投稿を取得する
-      const response = await this.$axios.get("http://127.0.0.1:8000/api/posts/" + this.current_post_id);
-      const {data} = {data: response.data}
-      const target_post = data.data[0];
-      const user_name = await common.getUserNameById(target_post.user_id);
+      const {data} = await this.$axios.get("http://127.0.0.1:8000/api/posts/" + this.current_post_id);
+      const targetPost = data.data;
       this.current_post = {
-        user_id: target_post.user_id,
-        post: target_post.post,
-        user: user_name,
-        likes: data.like_num,
+        user_id: targetPost.user_id,
+        post: targetPost.post,
+        user_name: targetPost.user_name,
+        like_count: targetPost.like_count
       };
     },
     async getAllComments() {//全てのコメントを表示する
       this.comment_items.splice(0);
-      const comments = await this.$axios.get("http://127.0.0.1:8000/api/comments/posts/" + this.current_post_id);
-      const data = {data: comments.data};
-      if(!data.data) {
-        return;
-      }
-      const dataArray = data.data.data;
-      for(const element of dataArray) {
-        const user_name = await common.getUserNameById(element.user_id);
+      const {data} = await this.$axios.get("http://127.0.0.1:8000/api/comments/posts/" + this.current_post_id);
+      const comments = {comments: data.data};
+      const commentArray = comments.comments;
+      if(commentArray.length === 0) return;
+      for(const commentData of commentArray) {
         const comment_item = { 
-          user_name: user_name, 
-          comment: element.comment
+          user_name: commentData.user_name, 
+          comment: commentData.comment
         };
         this.comment_items.unshift(comment_item);
       }
     },
     async addComment() {//コメントを投稿する
+      const isValid = await this.$refs.obs.validate();
+      if(!isValid) return;
       const currentUserId = await common.getCurrentUserId();
       const sendData = {
         user_id: currentUserId,
@@ -113,11 +109,10 @@ export default {
         comment: this.comment_textarea
       };
       //コメントをcommentsテーブルに追加
-      await this.$axios.post("http://127.0.0.1:8000/api/comments/posts", sendData);
-      const currentUserName = await common.getUserNameById(currentUserId);
+      const {data} = await this.$axios.post("http://127.0.0.1:8000/api/comments/posts", sendData);
       const commentItem = {
-        user_name: currentUserName,
-        comment: this.comment_textarea
+        user_name: data.data.user_name,
+        comment: data.data.comment
       }
       this.comment_items.unshift(commentItem);
       this.comment_textarea = null;
@@ -131,10 +126,10 @@ export default {
       if(!results.result) {
         return;
       }
-      if(results.likes) {
-        this.current_post.likes++;
+      if(results.like) {
+        this.current_post.like_count++;
       } else {
-        this.current_post.likes--;
+        this.current_post.like_count--;
       }
     },
     async deletePost() {//投稿を削除する

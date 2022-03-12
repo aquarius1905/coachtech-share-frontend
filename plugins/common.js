@@ -1,14 +1,6 @@
 import axios from 'axios';
 import firebase from "firebase";
 export default {
-  async getUserNameById(userId) { //ユーザーidからユーザー名を取得
-    const params = {
-      id: userId
-    };
-    const targetUser = await axios.get("http://127.0.0.1:8000/api/user/", { params });
-    const {targetUserData} = {targetUserData: targetUser.data};
-    return targetUserData.data[0].name;
-  },
   initFirebaseAuth() {// Firebase Authの初期化
     return new Promise((resolve) => {
       let unsubscribe = firebase.auth().onAuthStateChanged((user) => {
@@ -25,29 +17,27 @@ export default {
       user = await this.initFirebaseAuth();
     }
     const params = { email: user.email };
-    const data = await axios.get("http://127.0.0.1:8000/api/user/", { params });
-    const { currentUserData } = { currentUserData: data.data };
-    const userId = currentUserData.data[0].id;
-    return userId;
+    const targetUser = await axios.get("http://127.0.0.1:8000/api/user/", { params });
+    const { targetUserData } = { targetUserData: targetUser.data };
+    return targetUserData.id;
   },
   async toggleLikesNum(postUserId, postId) {//自分以外の投稿に良いねをする
     const currentUserId = await this.getCurrentUserId();
     if(postUserId === currentUserId) {
       alert("自分の投稿には「良いね」できません。");
-      return { result: false, likes: false };
+      return { result: false, like: false };
     }
     const params = {
       user_id: currentUserId,
       post_id: postId
     };
-    const response = await axios.get("http://127.0.0.1:8000/api/likes", { params });
-    const { data } = { data: response.data };
-    if (data.data === 0) {//自分の良いね数が存在しない場合、良いねを登録
-      await axios.post("http://127.0.0.1:8000/api/posts/likes", params);
-      return { result: true, likes: true };
-    } else {//自分の「良いね」が存在する場合、削除
+    const { data } = await axios.get("http://127.0.0.1:8000/api/likes", { params });
+    if (data.count > 0) {//自分の「良いね」が存在する場合、削除
       await axios.delete(`http://127.0.0.1:8000/api/likes/users/${currentUserId}/posts/` + postId);
-      return { result: true, likes: false };
+      return { result: true, like: false };
+    } else {//自分の良いね数が存在しない場合、良いねを登録
+      await axios.post("http://127.0.0.1:8000/api/posts/likes", params);
+      return { result: true, like: true };
     }
   },
   async deletePost(targetPostUserId, targetPostId) {//投稿を削除する
@@ -59,13 +49,8 @@ export default {
     if (!confirm('削除しますか？')) {
       return false;
     }
-    //自身の投稿なら削除する
+    //自身の投稿なら削除する(コメントが存在した場合、同時に削除する)
     await axios.delete("http://127.0.0.1:8000/api/posts/" + targetPostId);
-    const comments = await axios.get("http://127.0.0.1:8000/api/comments/posts/" + targetPostId);
-    const data = { data: comments.data };
-    if (data.data.length > 0) {//コメントも削除する
-      await axios.delete("http://127.0.0.1:8000/api/comments/posts/" + targetPostId);
-    }
     return true;
   },
 }

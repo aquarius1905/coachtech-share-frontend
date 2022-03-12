@@ -25,8 +25,8 @@
         </ul>
       </nav>
     </div>
-    <validation-observer ref="obs" v-slot="ObserverProps">
-      <validation-provider v-slot="{ errors }" rules="required|max:120">
+    <validation-observer ref="obs" tag="div">
+      <validation-provider rules="required|max:120" v-slot="{ errors }" >
         <label for="post_textarea">シェア</label>
         <br />
         <textarea
@@ -35,15 +35,13 @@
           name="シェア"
         ></textarea>
         <div class="error">{{ errors[0] }}</div>
+        <button
+          class="post_btn"
+          @click="addPost"
+        >
+          シェアする
+        </button>
       </validation-provider>
-      <button
-        type="button"
-        :disabled="ObserverProps.invalid || !ObserverProps.validated"
-        class="post_btn"
-        @click="addPost"
-      >
-        シェアする
-      </button>
     </validation-observer>
   </div>
 </template>
@@ -70,23 +68,24 @@ export default {
         });
     },
     async addPost() {//投稿する
+      const isValid = await this.$refs.obs.validate();
+      if(!isValid) return;
       const currentUserId = await common.getCurrentUserId();
       const sendData = {
         user_id: currentUserId,
         post: this.post_textarea,
       };
       //投稿をpostテーブルに追加
-      const response = await this.$axios.post("http://127.0.0.1:8000/api/posts", sendData);
-      const {data} = {data: response.data};
-      const currentUserName = await common.getUserNameById(currentUserId);
+      const {data} = await this.$axios.post("http://127.0.0.1:8000/api/posts", sendData);
       const postItem = {
         post_id: data.data.id, 
         user_id: currentUserId, 
         post: this.post_textarea, 
-        user: currentUserName,
-        likes: 0
+        user_name: data.data.user_name,
+        like_count: 0
       };
       this.$emit('addPostItem', postItem);
+      this.post_textarea = null;
     }
   }
 }
