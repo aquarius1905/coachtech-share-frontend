@@ -79,7 +79,7 @@ export default {
         name: this.name,
         email: this.email,
       }
-      await this.$axios.post("http://127.0.0.1:8000/api/register", sendData)
+      await this.$axios.post("/api/register", sendData)
       this.$router.replace('/login')
     }
   },

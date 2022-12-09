@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     async getCurrentPost() {//コメント対象の投稿を取得する
-      const {data} = await this.$axios.get("http://127.0.0.1:8000/api/posts/" + this.current_post_id);
+      const {data} = await this.$axios.get("/api/posts/" + this.current_post_id);
       const targetPost = data.data;
       this.current_post = {
         user_id: targetPost.user_id,
@@ -87,11 +87,12 @@ export default {
     },
     async getAllComments() {//全てのコメントを表示する
       this.comment_items.splice(0);
-      const {data} = await this.$axios.get("http://127.0.0.1:8000/api/comments/posts/" + this.current_post_id);
-      const comments = {comments: data.data};
-      const commentArray = comments.comments;
-      if(commentArray.length === 0) return;
-      for(const commentData of commentArray) {
+      const { data } = await this.$axios.get(
+        "/api/comments/posts/" + this.current_post_id
+      );
+      const comments = data.data;
+      if(comments.length === 0) return;
+      for(const commentData of comments) {
         const comment_item = { 
           user_name: commentData.user_name, 
           comment: commentData.comment
@@ -109,7 +110,7 @@ export default {
         comment: this.comment_textarea
       };
       //コメントをcommentsテーブルに追加
-      const {data} = await this.$axios.post("http://127.0.0.1:8000/api/comments/posts", sendData);
+      const {data} = await this.$axios.post("/api/comments/posts", sendData);
       const commentItem = {
         user_name: data.data.user_name,
         comment: data.data.comment
@@ -134,7 +135,7 @@ export default {
     },
     async deletePost() {//投稿を削除する
       if(await common.deletePost(this.current_post.user_id, this.current_post_id)) {
-        this.$router.push('/post')
+        this.$router.push('/')
       }
     }
   },

@@ -5,7 +5,7 @@
       <nav>
         <ul class="nav_wrapper">
           <li class="nav_item">
-            <NuxtLink to="/post">
+            <NuxtLink to="/">
               <img
                 src="~/assets/image/home.png"
                 class="home_img"
@@ -62,9 +62,8 @@ export default {
         .auth()
         .signOut()
         .then(() => {
-          this.$router.replace("/login").then(() => {
-            alert("ログアウトが完了しました。");
-          })
+          alert("ログアウトが完了しました。");
+          this.$router.replace("/login")
         });
     },
     async addPost() {//投稿する
@@ -76,7 +75,7 @@ export default {
         post: this.post_textarea,
       };
       //投稿をpostテーブルに追加
-      const {data} = await this.$axios.post("http://127.0.0.1:8000/api/posts", sendData);
+      const { data } = await this.$axios.post("/api/posts", sendData);
       const postItem = {
         post_id: data.data.id, 
         user_id: currentUserId, 

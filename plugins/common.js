@@ -17,7 +17,7 @@ export default {
       user = await this.initFirebaseAuth();
     }
     const params = { email: user.email };
-    const targetUser = await axios.get("http://127.0.0.1:8000/api/user/", { params });
+    const targetUser = await axios.get("/api/user/", { params });
     const { targetUserData } = { targetUserData: targetUser.data };
     return targetUserData.id;
   },
@@ -31,12 +31,12 @@ export default {
       user_id: currentUserId,
       post_id: postId
     };
-    const { data } = await axios.get("http://127.0.0.1:8000/api/likes", { params });
+    const { data } = await axios.get("/api/likes", { params });
     if (data.count > 0) {//自分の「良いね」が存在する場合、削除
-      await axios.delete(`http://127.0.0.1:8000/api/likes/users/${currentUserId}/posts/` + postId);
+      await axios.delete(`/api/likes/users/${currentUserId}/posts/` + postId);
       return { result: true, like: false };
     } else {//自分の良いね数が存在しない場合、良いねを登録
-      await axios.post("http://127.0.0.1:8000/api/posts/likes", params);
+      await axios.post("/api/posts/likes", params);
       return { result: true, like: true };
     }
   },
@@ -50,7 +50,7 @@ export default {
       return false;
     }
     //自身の投稿なら削除する(コメントが存在した場合、同時に削除する)
-    await axios.delete("http://127.0.0.1:8000/api/posts/" + targetPostId);
+    await axios.delete("/api/posts/" + targetPostId);
     return true;
   },
 }

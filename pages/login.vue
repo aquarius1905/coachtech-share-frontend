@@ -33,7 +33,7 @@ export default {
       .auth()
       .signInWithEmailAndPassword(this.email, this.password)
       .then(() => {
-        this.$router.push('/post');
+        this.$router.push('/');
       })
       .catch(() => {
         alert('メールアドレスまたはパスワードが正しくありません。')
