@@ -4,7 +4,7 @@
       <img src="../assets/image/logo.png" width="10%" height="10%">
       <nav>
         <ul class="nav__list flex">
-          <li class="nav__item"><NuxtLink to="/">新規登録</NuxtLink></li>
+          <li class="nav__item"><NuxtLink to="/register">新規登録</NuxtLink></li>
           <li class="nav__item"><NuxtLink to="/login">ログイン</NuxtLink></li>
         </ul>
       </nav>
