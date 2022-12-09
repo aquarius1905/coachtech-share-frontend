@@ -8,7 +8,7 @@
       <div class="post_list">
         <div v-for="(item, index) in post_items" :key="index" class="post_item">
           <div class="post_header">
-            <h2 class="user_name">{{ item.user_name }}</h2>
+            <h2 class="user_name">{{ item.user.name }}</h2>
             <button class="likes_btn" @click="toggleLikesNum(item)">
               <img
                 src="~/assets/image/heart.png"

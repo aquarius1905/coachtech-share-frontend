@@ -68,13 +68,15 @@ export default {
     },
     async addPost() {//投稿する
       const isValid = await this.$refs.obs.validate();
-      if(!isValid) return;
+      if (!isValid) return;
+      
       const currentUserId = await common.getCurrentUserId();
       const sendData = {
         user_id: currentUserId,
         post: this.post_textarea,
       };
-      //投稿をpostテーブルに追加
+
+      console.log('addPost');
       const { data } = await this.$axios.post("/api/posts", sendData);
       const postItem = {
         post_id: data.data.id, 
@@ -83,6 +85,7 @@ export default {
         user_name: data.data.user_name,
         like_count: 0
       };
+
       this.$emit('addPostItem', postItem);
       this.post_textarea = null;
     }
