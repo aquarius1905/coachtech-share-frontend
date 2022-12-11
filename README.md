@@ -1,6 +1,4 @@
-# アプリケーション名
-
-Twitter 風 SNS アプリ
+# Twitter 風 SNS アプリ
 
 ## 作成した目的
 
