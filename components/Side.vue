@@ -62,7 +62,6 @@ export default {
         .auth()
         .signOut()
         .then(() => {
-          alert("ログアウトが完了しました。");
           this.$router.replace("/login")
         });
     },
@@ -76,17 +75,9 @@ export default {
         post: this.post_textarea,
       };
 
-      console.log('addPost');
       const { data } = await this.$axios.post("/api/posts", sendData);
-      const postItem = {
-        post_id: data.data.id, 
-        user_id: currentUserId, 
-        post: this.post_textarea, 
-        user_name: data.data.user_name,
-        like_count: 0
-      };
 
-      this.$emit('addPostItem', postItem);
+      this.$emit('addPostItem', data.data);
       this.post_textarea = null;
     }
   }

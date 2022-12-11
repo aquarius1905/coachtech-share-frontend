@@ -1,6 +1,6 @@
 <template>
   <div class="post flex">
-    <Side @addPostItem="addPostItem($event)"></Side>
+    <Side @addPostItem="addPostItem"/>
     <div class="post_wrapper">
       <div class="ttl_wrapper">
         <h1>ホーム</h1>
@@ -55,13 +55,13 @@ export default {
       const { data } = await this.$axios.get("/api/likes/posts/", { params });
       return data.count;
     },
-    async deletePost(targetPost, index) {//投稿を削除する
-      if (await common.deletePost(targetPost.user_id, targetPost.post_id)) {
+    async deletePost(post, index) {//投稿を削除する
+      if (await common.deletePost(post.user_id, post.id)) {
         this.post_items.splice(index, 1);
       }
     },
-    async toggleLikesNum(item) {//自分以外の投稿に良いねをする
-      const results = await common.toggleLikesNum(item.user_id, item.post_id);
+    async toggleLikesNum(post) {//自分以外の投稿に良いねをする
+      const results = await common.toggleLikesNum(item.user_id, item.id);
       if (!results.result) return;
       if (results.like) {
         item.like_count++;
@@ -69,8 +69,8 @@ export default {
         item.like_count--;
       }
     },
-    addPostItem(event) {//投稿を追加する
-      this.post_items.unshift(event);
+    addPostItem(item) {//投稿を追加する
+      this.post_items.unshift(item);
     }
   },
   created() {

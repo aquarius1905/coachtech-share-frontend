@@ -1,6 +1,6 @@
 <template>
   <div class="post flex">
-    <Side @addPostItem="addPostItem($event)"></Side>
+    <Side @addPostItem="addPostItem"/>
     <div class="post_wrapper">
       <div class="ttl_wrapper">
         <h1>ホーム</h1>
@@ -17,7 +17,7 @@
                 class="post_header_img"
               />
             </button>
-            <p class="likes_num">{{ item.like_count }}</p>
+            <p class="likes_num">{{ item.likes_count }}</p>
             <button class="post_delete_btn" @click="deletePost(item, index)">
               <img
                 src="~/assets/image/cross.png"
@@ -26,7 +26,7 @@
               />
             </button>
             <NuxtLink 
-              :to="`/comments/posts/${item.post_id}`"
+              :to="`/comments/posts/${item.id}`"
               tag="img"
               :src="require('~/assets/image/detail.png')"
               class="to_comment"
@@ -55,30 +55,21 @@ export default {
     async getPosts() {//全ての投稿を取得
       this.post_items.splice(0);
       const { data } = await this.$axios.get("/api/posts");
-      
-      for(const postData of data.data) {
-        const postItem = { 
-          post_id: postData.id, 
-          user_id: postData.user_id, 
-          post: postData.post, 
-          user_name: postData.user_name,
-          like_count: postData.like_count
-        };
-        this.post_items.unshift(postItem);
-      }
+
+      this.post_items = data.data;
     },
     async getLikesCount(postId) {//良いね数取得
       const params = { post_id: postId };
       const {data} = await this.$axios.get("/api/likes/posts/", {params});
       return data.count;
     },
-    async deletePost(targetPost, index) {//投稿を削除する
-      if(await common.deletePost(targetPost.user_id, targetPost.post_id)) {
+    async deletePost(post, index) {//投稿を削除する
+      if (await common.deletePost(post.user_id, post.id)) {
         this.post_items.splice(index, 1);
       }
     },
-    async toggleLikesNum(item) {//自分以外の投稿に良いねをする
-      const results = await common.toggleLikesNum(item.user_id, item.post_id);
+    async toggleLikesNum(post) {//自分以外の投稿に良いねをする
+      const results = await common.toggleLikesNum(post.user_id, post.id);
       if(!results.result) return;
       if(results.like) {
         item.like_count++;
@@ -86,8 +77,8 @@ export default {
         item.like_count--;
       }
     },
-    addPostItem(event) {//投稿を追加する
-      this.post_items.unshift(event);
+    addPostItem(item) {//投稿を追加する
+      this.post_items.unshift(item);
     }
   },
   created() {

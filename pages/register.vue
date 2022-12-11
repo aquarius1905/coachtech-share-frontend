@@ -79,8 +79,10 @@ export default {
         name: this.name,
         email: this.email,
       }
-      await this.$axios.post("/api/register", sendData)
-      this.$router.replace('/login')
+      const response = await this.$axios.post("/api/register", sendData);
+      if (response.status === 201) {
+        this.$router.replace('/login');
+      }
     }
   },
 }
