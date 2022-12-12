@@ -7,7 +7,7 @@
       </div>
       <div class="post_item">
         <div class="post_header">
-          <h2 class="user_name">{{ current_post.user_name }}</h2>
+          <h2 class="user_name">{{ current_post.user.name }}</h2>
           <button class="likes_btn" @click="toggleLikesNum">
             <img
               src="~/assets/image/heart.png"
@@ -16,7 +16,7 @@
               class="post_header_img"
             />
           </button>
-          <p class="likes_num">{{ current_post.like_count }}</p>
+          <p class="likes_num">{{ current_post.likes_count }}</p>
           <button class="post_delete_btn" @click="deletePost">
             <img
               src="~/assets/image/cross.png"
@@ -34,7 +34,7 @@
           <div class="comment_list">
             <div v-for="(item, index) in comment_items" :key="index" class="comment_item">
               <div class="comment_header">
-                <h3 class="comment_user_name">{{ item.user_name }}</h3>
+                <h3 class="comment_user_name">{{ item.user.name }}</h3>
                 <p class="comment_content">{{ item.comment }}</p>
               </div>
             </div>
@@ -68,80 +68,47 @@ import common from '@/plugins/common'
 export default {
   data() {
     return {
-      current_post_id: this.$route.params.id,
-      current_post: {},
+      current_post: this.$route.query.post,
       comment_textarea: null,
-      comment_items: []
+      comment_items: this.$route.query.post.comments
     }
   },
   methods: {
-    async getCurrentPost() {//コメント対象の投稿を取得する
-      const {data} = await this.$axios.get("/api/posts/" + this.current_post_id);
-      const targetPost = data.data;
-      this.current_post = {
-        user_id: targetPost.user_id,
-        post: targetPost.post,
-        user_name: targetPost.user_name,
-        like_count: targetPost.like_count
-      };
-    },
-    async getAllComments() {//全てのコメントを表示する
-      this.comment_items.splice(0);
-      const { data } = await this.$axios.get(
-        "/api/comments/posts/" + this.current_post_id
-      );
-      const comments = data.data;
-      if(comments.length === 0) return;
-      for(const commentData of comments) {
-        const comment_item = { 
-          user_name: commentData.user_name, 
-          comment: commentData.comment
-        };
-        this.comment_items.unshift(comment_item);
-      }
-    },
     async addComment() {//コメントを投稿する
       const isValid = await this.$refs.obs.validate();
       if(!isValid) return;
       const currentUserId = await common.getCurrentUserId();
       const sendData = {
         user_id: currentUserId,
-        post_id: this.current_post_id,
+        post_id: this.current_post.id,
         comment: this.comment_textarea
       };
       //コメントをcommentsテーブルに追加
-      const {data} = await this.$axios.post("/api/comments/posts", sendData);
-      const commentItem = {
-        user_name: data.data.user_name,
-        comment: data.data.comment
-      }
-      this.comment_items.unshift(commentItem);
+      const { data } = await this.$axios.post("/api/comments/posts", sendData);
+      this.comment_items.unshift(data.data);
       this.comment_textarea = null;
     },
     async toggleLikesNum() {//自分以外の投稿に良いねをする
       const results = await common.toggleLikesNum
       (
         this.current_post.user_id, 
-        this.current_post_id
+        this.current_post.id
       );
       if(!results.result) {
         return;
       }
+      console.log(this.current_post);
       if(results.like) {
-        this.current_post.like_count++;
+        this.current_post.likes_count++;
       } else {
-        this.current_post.like_count--;
+        this.current_post.likes_count--;
       }
     },
     async deletePost() {//投稿を削除する
-      if(await common.deletePost(this.current_post.user_id, this.current_post_id)) {
+      if (await common.deletePost(this.current_post.user_id, this.current_post.id)) {
         this.$router.push('/')
       }
     }
-  },
-  created() {
-    this.getCurrentPost();
-    this.getAllComments();
   }
 }
 </script>

@@ -14,7 +14,6 @@
                 src="~/assets/image/heart.png"
                 width="30px"
                 height="auto"
-                class="post_header_img"
               />
             </button>
             <p class="likes_num">{{ item.likes_count }}</p>
@@ -25,15 +24,9 @@
                 height="auto"
               />
             </button>
-            <NuxtLink 
-              :to="`/comments/posts/${item.id}`"
-              tag="img"
-              :src="require('~/assets/image/detail.png')"
-              class="to_comment"
-              width="40px"
-              height="auto"
-              >
-            </NuxtLink>
+            <button class="post_delete_btn" @click="showComment(item)">
+              <img src="~/assets/image/detail.png" width="30px" height="auto" />
+            </button>
           </div>
           <p class="post_content">{{ item.post }}</p>
         </div>
@@ -58,11 +51,6 @@ export default {
 
       this.post_items = data.data;
     },
-    async getLikesCount(postId) {//良いね数取得
-      const params = { post_id: postId };
-      const {data} = await this.$axios.get("/api/likes/posts/", {params});
-      return data.count;
-    },
     async deletePost(post, index) {//投稿を削除する
       if (await common.deletePost(post.user_id, post.id)) {
         this.post_items.splice(index, 1);
@@ -72,24 +60,23 @@ export default {
       const results = await common.toggleLikesNum(post.user_id, post.id);
       if(!results.result) return;
       if(results.like) {
-        item.like_count++;
+        post.likes_count++;
       } else {
-        item.like_count--;
+        post.likes_count--;
       }
     },
-    addPostItem(item) {//投稿を追加する
+    async showComment(post) {
+      this.$router.push({
+        path: `/comments/posts/${post.id}`,
+        query: { post: post }
+      })
+    },
+    addPostItem(item) {//投稿を追加
       this.post_items.unshift(item);
     }
   },
   created() {
-    //全ての投稿を取得
     this.getPosts();
   },
 };
 </script>
-
-<style scoped>
-.to_comment {
-  cursor: pointer;
-}
-</style>

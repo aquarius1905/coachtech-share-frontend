@@ -49,8 +49,7 @@ export default {
     if (!confirm('削除しますか？')) {
       return false;
     }
-    console.log(targetPostId);
-    //自身の投稿なら削除する(コメントが存在した場合、同時に削除する)
+    //自身の投稿なら削除する(コメントといいねも同時に削除)
     await axios.delete("/api/posts/" + targetPostId);
     return true;
   },

@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="header__wrapper">
-      <img src="../assets/image/logo.png" width="10%" height="10%">
+      <h1 class="app__ttl">SHARE</h1>
       <nav>
         <ul class="nav__list flex">
           <li class="nav__item"><NuxtLink to="/register">新規登録</NuxtLink></li>

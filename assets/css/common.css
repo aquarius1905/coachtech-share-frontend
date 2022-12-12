@@ -2,6 +2,10 @@ a {
   color: #fff;
   text-decoration: none;
 }
+.app__ttl {
+  font-size: 40px;
+  font-style: italic;
+}
 .flex {
   display: flex;
 }

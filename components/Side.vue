@@ -1,7 +1,7 @@
 <template>
   <div class="side">
     <div class="side_wrapper">
-      <img src="~/assets/image/logo.png" width="200px" height="auto" />
+      <h1 class="app__ttl">SHARE</h1>
       <nav>
         <ul class="nav_wrapper">
           <li class="nav_item">

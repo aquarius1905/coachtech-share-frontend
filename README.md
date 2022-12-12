@@ -4,10 +4,6 @@
 
 Laravel、Vue.js、Nuxt.js の理解を深めるため
 
-## アプリケーション URL
-
-https://share-app-84535.web.app/
-
 ## 他のリポジトリ
 
 バックエンドのリポジトリ：
@@ -24,7 +20,11 @@ https://github.com/aquarius1905/shareapp-backend
 
 ## 使用技術（実行環境）
 
-- HTML, CSS, Javascript, Vue.js, Nuxt.js
+| カテゴリ       | 技術スタック                           |
+| -------------- | -------------------------------------- |
+| フロントエンド | HTML, CSS, JavaScript, Vue.js, Nuxt.js |
+| バックエンド   | PHP, Laravel                           |
+| データベース   | MySQL                                  |
 
 ## テーブル設計
 
