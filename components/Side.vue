@@ -74,6 +74,7 @@ export default {
         user_id: currentUserId,
         post: this.post_textarea,
       };
+      console.log(sendData)
 
       const { data } = await this.$axios.post("/api/posts", sendData);
 
